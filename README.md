@@ -74,6 +74,7 @@ $ python3 database_backup.py --config_path=/path/to/configuration.json
 #### Prerequisites for data_rsync.py
 Python modules: 
  * pexpect
+ * argparser
 
 Utilities:
  * rsync
