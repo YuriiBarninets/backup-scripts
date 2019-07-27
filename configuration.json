@@ -23,12 +23,24 @@
       ],
       "backup_dir": "/home/server_username/sql_dumps/",
       "backup_expiration_days": 5
+    },
+    "data": {
+      "sync_dirs": [
+        "/home/server_username/dirname1/",
+        "/home/server_username/dirname2/"
+      ]
     }
   },
   "local": {
     "database": {
       "backup_dir": "/home/local_username/sql_dumps/",
       "backup_expiration_days": 15
+    },
+    "data": {
+      "sync_dirs": [
+        "/home/local_username/dirname1/",
+        "/home/local_username/dirname2/"
+      ]
     }
   }
 }
