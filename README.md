@@ -92,7 +92,7 @@ We must add the following configurations if we want to transfer content from a s
 ```
 This configuration will copy all contents from */home/server_username/dirname1/* and */home/server_username/dirname2/* directories on a server side to corresponding directories */home/local_username/dirname1/* and */home/local_username/dirname2/* on a local machine.
 
-#### 3. Run *data_rsync.py* script like this:
+#### 2. Run *data_rsync.py* script like this:
 ```
 $ python3 data_rsync.py --config_path=/path/to/configuration.json
 ```
