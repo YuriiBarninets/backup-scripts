@@ -1,0 +1,34 @@
+{
+  "server": {
+    "host": "192.168.1.1",
+    "ssh": {
+      "username": "admin",
+      "password": "ssh_pwd",
+      "port": 22
+    },
+    "database": {
+      "mysql": [
+        {
+          "host": "localhost",
+          "username": "sql_user1",
+          "password": "user1_pwd",
+          "dbnames": ["db1", "db2"]
+        },
+        {
+          "host": "localhost",
+          "username": "sql_user2",
+          "password": "user2_pwd",
+          "dbnames": ["db3"]
+        }
+      ],
+      "backup_dir": "/home/server_username/sql_dumps/",
+      "backup_expiration_days": 5
+    }
+  },
+  "local": {
+    "database": {
+      "backup_dir": "/home/local_username/sql_dumps/",
+      "backup_expiration_days": 15
+    }
+  }
+}
