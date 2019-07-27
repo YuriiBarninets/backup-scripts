@@ -16,7 +16,8 @@ sourceSyncDirs = serverConfig["data"]["sync_dirs"]
 destSyncDirs = localConfig["data"]["sync_dirs"]
 
 # execute rsync command for each pair of sourceSyncDir -> destSyncDir
-for sourceSyncDir, destSyncDir in zip(sourceSyncDirs, destSyncDirs):
-    rsyncCmd = rsyncCmdPattern.format(sourceSyncDirs, destSyncDirs)
-    pexpect.run(rsyncCmd, events={
-                '(?i)password': serverConfig["ssh"]["password"] + "\r"})
+for sourceDir, destDir in zip(sourceSyncDirs, destSyncDirs):
+    rsyncCmd = rsyncCmdPattern.format(sourceDir, destDir)
+    result = pexpect.run(rsyncCmd, events={
+        '(?i)password': serverConfig["ssh"]["password"] + "\r"})
+    print(result)
