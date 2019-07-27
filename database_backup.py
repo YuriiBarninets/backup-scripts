@@ -1,5 +1,4 @@
 import paramiko
-import json
 import os
 import utils
 from datetime import datetime
@@ -31,8 +30,8 @@ for databaseConfig in mySqlConfig:
             dbName, datetime.now().strftime("%Y_%m_%d"))
         dumpFilePath = os.path.join(serverDatabaseBackupDir, dumpFileName)
 
-        mySqlDumpCommand = createSqlDumpCmd.format(dbName, dumpFilePath)
-        stdin, stdout, stderr = ssh.exec_command(mySqlDumpCommand)
+        mySqlDumpCmd = createSqlDumpCmd.format(dbName, dumpFilePath)
+        stdin, stdout, stderr = ssh.exec_command(mySqlDumpCmd)
         if not stdout.channel.recv_exit_status():
             print("Created SQL dump for {0} DB".format(dbName))
         else:
