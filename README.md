@@ -11,6 +11,14 @@ Each script takes as an input a path to a configuration file, so firstly create 
 ### Usage database_backup.py script
 *database_backup.py* script creates MySQL dumps for databases listed in *configuration.json* file and copy them to a local backup dir.
 
+#### Prerequisites for database_backup.py
+Python modules: 
+ * paramiko
+ * argparser
+
+Utilities:
+ * mysqldump
+
 #### 1. Add mysql databases in *configuration.json* file
 In *configuration.json* file **mysql** key contains an array with users and databases for which we are going to create backups.
 For example, **sql_user1** manage **db1, db2** and **sql_user2** manage **db3**, so in order to backup **db1, db2, db3** databases we have to add the following content to **mysql**:
@@ -62,6 +70,13 @@ $ python3 database_backup.py --config_path=/path/to/configuration.json
 
 ### Usage data_rsync.py script
 *data_rsync.py* script using rsync utility for transferring data from a server side to a local machine.
+
+#### Prerequisites for data_rsync.py
+Python modules: 
+ * pexpect
+
+Utilities:
+ * rsync
 
 #### 1. Add server and local sync directories in *configuration.json* file
 Server directory | Local directory
