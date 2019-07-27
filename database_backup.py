@@ -1,23 +1,17 @@
-import paramiko
 import os
 import utils
 from datetime import datetime
 from config import serverConfig, localConfig
+from ssh_client import sshClient
 
-# setup SSH connection
-sshConfig = serverConfig["ssh"]
-ssh = paramiko.SSHClient()
-ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-ssh.connect(serverConfig["host"], sshConfig["port"],
-            sshConfig["username"], sshConfig["password"])
-sftp = ssh.open_sftp()
+sftpSession = sshClient.open_sftp()
 
 # create MySQL dumps in server backup dir
 serverDatabaseBackupDir = serverConfig["database"]["backup_dir"]
 try:
-    sftp.stat(serverDatabaseBackupDir)
+    sftpSession.stat(serverDatabaseBackupDir)
 except FileNotFoundError:
-    sftp.mkdir(serverDatabaseBackupDir, mode=448)  # 0x700 = 448
+    sftpSession.mkdir(serverDatabaseBackupDir, mode=448)  # 0x700 = 448
 
 mySqlConfig = serverConfig["database"]["mysql"]
 for databaseConfig in mySqlConfig:
@@ -31,17 +25,17 @@ for databaseConfig in mySqlConfig:
         dumpFilePath = os.path.join(serverDatabaseBackupDir, dumpFileName)
 
         mySqlDumpCmd = createSqlDumpCmd.format(dbName, dumpFilePath)
-        stdin, stdout, stderr = ssh.exec_command(mySqlDumpCmd)
+        stdin, stdout, stderr = sshClient.exec_command(mySqlDumpCmd)
         if not stdout.channel.recv_exit_status():
             print("Created SQL dump for {0} DB".format(dbName))
         else:
             print("Can not create SQL dump for {0} DB".format(dbName))
 
 # delete database dumps older than serverDatabaseBackupExpirationDays
-databaseDumpsList = sftp.listdir(path=serverDatabaseBackupDir)
+databaseDumpsList = sftpSession.listdir(path=serverDatabaseBackupDir)
 serverDatabaseBackupExpirationDays = serverConfig["database"]["backup_expiration_days"]
 utils.deleteFilesOlderThanExpirationDays(databaseDumpsList, serverDatabaseBackupDir,
-                                         serverDatabaseBackupExpirationDays, sftp)
+                                         serverDatabaseBackupExpirationDays, sftpSession)
 
 # copy database dumps from serverDatabaseBackupDir to localDatabaseBackupDir
 localDatabaseBackupDir = localConfig["database"]["backup_dir"]
@@ -53,10 +47,10 @@ for databaseDump in databaseDumpsList:
     pathToLocalFile = os.path.join(localDatabaseBackupDir, databaseDump)
 
     if not os.path.isfile(pathToLocalFile):
-        sftp.get(pathToRemoteFile, pathToLocalFile)
+        sftpSession.get(pathToRemoteFile, pathToLocalFile)
 
         # preserve timestamp
-        fileAttrs = sftp.stat(pathToRemoteFile)
+        fileAttrs = sftpSession.stat(pathToRemoteFile)
         os.utime(pathToLocalFile, (fileAttrs.st_atime, fileAttrs.st_mtime))
 
 # delete database dumps older than localDatabaseBackupExpirationDays
@@ -65,5 +59,5 @@ utils.deleteFilesOlderThanExpirationDays(
     localConfig["database"]["backup_expiration_days"], os)
 
 # close sftp, ssh connection
-sftp.close()
-ssh.close()
+sftpSession.close()
+sshClient.close()
