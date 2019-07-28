@@ -20,4 +20,4 @@ for sourceDir, destDir in zip(sourceSyncDirs, destSyncDirs):
     rsyncCmd = rsyncCmdPattern.format(sourceDir, destDir)
     result = pexpect.run(rsyncCmd, events={
         '(?i)password': serverConfig["ssh"]["password"] + "\r"})
-    print(result)
+    print(result.decode("utf-8"))
