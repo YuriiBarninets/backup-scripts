@@ -13,7 +13,7 @@ try:
 except FileNotFoundError:
     sftpSession.mkdir(serverDatabaseBackupDir, mode=448)  # 0x700 = 448
 
-print("Creating MySQL dumps into server {0} directory ... ".format(
+print("Creating MySQL dumps in server {0} directory ... ".format(
     serverDatabaseBackupDir))
 mySqlConfig = serverConfig["database"]["mysql"]
 for databaseConfig in mySqlConfig:
@@ -46,7 +46,7 @@ localDatabaseBackupDir = localConfig["database"]["backup_dir"]
 if not os.path.isdir(localDatabaseBackupDir):
     os.mkdir(localDatabaseBackupDir)
 
-print("Copy MySQL dumps from server {0} to local {1} directory".format(
+print("Copy database dumps from server {0} to local {1} directory".format(
       serverDatabaseBackupDir, localDatabaseBackupDir))
 for databaseDump in databaseDumpsList:
     pathToRemoteFile = os.path.join(serverDatabaseBackupDir, databaseDump)
@@ -60,11 +60,11 @@ for databaseDump in databaseDumpsList:
         os.utime(pathToLocalFile, (fileAttrs.st_atime, fileAttrs.st_mtime))
 
 # delete database dumps older than localDatabaseBackupExpirationDays
+localDatabaseBackupExpirationDays = localConfig["database"]["backup_expiration_days"]
 print("Delete database dumps from {0} older than {1}".format(
-    localDatabaseBackupDir, serverDatabaseBackupExpirationDays))
-utils.deleteFilesOlderThanExpirationDays(
-    os.listdir(localDatabaseBackupDir), localDatabaseBackupDir,
-    localConfig["database"]["backup_expiration_days"], os)
+    localDatabaseBackupDir, localDatabaseBackupExpirationDays))
+utils.deleteFilesOlderThanExpirationDays(os.listdir(localDatabaseBackupDir), localDatabaseBackupDir,
+                                         localDatabaseBackupExpirationDays, os)
 
 # close sftp, ssh connection
 sftpSession.close()
